@@ -1,41 +1,59 @@
-const gmailInput = document.querySelector("#gmail_input");
-const gmailButton = document.querySelector("#gmail_button");
-const gmailResult = document.querySelector("#gmail_result");
+const childBlock = document.querySelector(".child_block");
 
-const regExp = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+const parentFreeWidth = 449;
+const moveSpeedChildBlock = 6;
 
-gmailButton.addEventListener("click", () => {
-    if (regExp.test(gmailInput.value)) {
-        gmailResult.innerHTML = 'ok';
-        gmailResult.style.color = '#00ff00';
-    } else {
-        gmailResult.innerHTML = 'not ok';
-        gmailResult.style.color = '#ff0000';
+let positionX = 0;
+let positionY = 0;
+
+const moveBlock = () => {
+    if (positionX < parentFreeWidth && positionY === 0) {
+        positionX++;
+        childBlock.style.left = `${positionX}px`;
+        setTimeout(moveBlock, moveSpeedChildBlock);
+    } else if (positionX >= parentFreeWidth && positionY < parentFreeWidth) {
+        positionY++;
+        childBlock.style.top = `${positionY}px`;
+        setTimeout(moveBlock, moveSpeedChildBlock);
+    } else if (positionX >= 0) {
+        positionX--;
+        childBlock.style.left = `${positionX}px`;
+        setTimeout(moveBlock, moveSpeedChildBlock);
+    } else if (positionY > 0) {
+        positionY--;
+        childBlock.style.top = `${positionY}px`;
+        setTimeout(moveBlock, moveSpeedChildBlock);
+    }
+};
+
+moveBlock();
+
+const secondsS = document.querySelector("#secondsS");
+const startBtn = document.querySelector("#start");
+const stopBtn = document.querySelector("#stop");
+const resetBtn = document.querySelector("#reset");
+let restStart = 0
+let timer;
+
+startBtn.addEventListener("click", () => {
+    if (!timer) {
+        // Если таймер не запущен, то начинаем его
+        timer = setInterval(() => {
+            restStart++;
+            secondsS.textContent = restStart;
+        }, 1000);
     }
 });
 
+stopBtn.addEventListener("click", () => {
+    clearInterval(timer);
+    timer = null;
+});
 
+resetBtn.addEventListener("click", () => {
+    restStart = 0;
+    secondsS.textContent = restStart;
 
-//MOVE BLOCK
-
-const parentBlock = document.querySelector(".parent_block");
-const childBlock = document.querySelector(".child_block");
-
-let currentPosition = 0;
-
-function moveChildBlock() {
-    if (currentPosition < parentBlock.offsetWidth - childBlock.offsetWidth) {
-        currentPosition += 3;
-        childBlock.style.left = `${currentPosition}px`;
-
-        requestAnimationFrame(moveChildBlock);
-    } else if (currentPosition > 448) {
-        currentPosition = 448;
-        childBlock.style.left = `${currentPosition}px`;
-    }
-}
-
-
-moveChildBlock();
-
-
+    clearInterval(timer);
+    timer = null;
+});
